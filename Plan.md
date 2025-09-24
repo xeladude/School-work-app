@@ -1,6 +1,6 @@
 Plan
 
-NEXT CLASS:
+NEXT CLASS 9/16/25:
 Notes button, in task, make it a note symbol, string probably, opens a text file or text that says "enter notes here"
  -Will extend the task object to include the new notes field.
  -Add a new icon/button to the HTML structure

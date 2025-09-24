@@ -41,7 +41,8 @@
                         <th>task</th>
                         <th>subject</th>
                         <th>date</th>
-                        <th>completed</th>
+                        <th>notes</th>
+                        <th>completed</th> 
                     </tr>
                 </thead>
                 <tbody id="tasks-body">
@@ -57,9 +58,21 @@
 
 
 
+        <div id = "notes-modal" class="modal hidden">
+            <div class = "modal-content">
+                <h2> Edit notes</h2>
+                <textarea id = "notes-text"></textarea>
+                <div class="modal-buttons">
+                    <button id="save-note">Save</button>
+                    <button id="cancel-note">Cancel</button>
+                </div>
+            </div>
+        </div>
+
 
     <script src = "main.js"></script>
 </body>
+
 
 </html>
 

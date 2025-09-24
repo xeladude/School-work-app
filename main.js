@@ -1,4 +1,6 @@
 let tasks = [];
+let currentEditingTaskID = null;
+
 
 document.getElementById("task-form").addEventListener("submit", function (e){
     e.preventDefault();
@@ -13,6 +15,7 @@ document.getElementById("task-form").addEventListener("submit", function (e){
         tasks.push({
             id: Date.now(),
             title,
+            notes : "",
             subject,
             dueDate,
             completed:false,
@@ -93,10 +96,18 @@ function renderTasks(){
                 });
                 completedCell.appendChild(removeButton);
             }
+
+            const notesCell = document.createElement("td");
+            const notesButton = document.createElement("button");
+            notesButton.textContent = "📝";
+            notesButton.className = "notes-button";
+            notesButton.addEventListener("click", () => openNotesModal(task.id));
+            notesCell.appendChild(notesButton);
             
             row.appendChild(titleCell);
             row.appendChild(subjectCell);
             row.appendChild(dueDateCell);
+            row.appendChild(notesCell)
             row.appendChild(completedCell);
 
             tableBody.appendChild(row);
@@ -104,6 +115,32 @@ function renderTasks(){
         });  
 }
 
+
+function openNotesModal(taskID){
+    currentEditingTaskID = taskID;
+    const task = tasks.find(t => t.id === taskID);
+    document.getElementById("notes-text").value = task.notes || "";
+    document.getElementById("notes-modal").classList.remove("hidden");
+    
+    // find the task ID, then display notes modal
+}
+
+function closeNotesModal(){
+    currentEditingTaskID = null;
+    document.getElementById("notes-modal").classList.add("hidden")
+    // close it (duh)
+}
+
+// configure modal buttons
+document.getElementById("save-note").addEventListener("click", () => {
+    const task = tasks.find (t => t.id === currentEditingTaskID);
+    task.notes = document.getElementById("notes-text").value.trim();
+    closeNotesModal();
+    //kinda do the same as openNotesModal function
+
+})
+
+document.getElementById("cancel-note").addEventListener("click", closeNotesModal);
 
 renderTasks();
 
