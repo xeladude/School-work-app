@@ -1,7 +1,11 @@
 let tasks = [];
 let currentEditingTaskID = null;
 
-
+window.API.getTasks().then(savedTasks => {
+    tasks = savedTasks;
+    renderTasks(); 
+});
+//window.API.saveTasks(tasks);
 document.getElementById("task-form").addEventListener("submit", function (e){
     e.preventDefault();
 
@@ -10,6 +14,7 @@ document.getElementById("task-form").addEventListener("submit", function (e){
     const subject = document.getElementById("task-subject").value.trim();
     
     const dueDate = document.getElementById("task-date").value.trim();
+    // const savedTasks = await window.api.getTasks();
 
     if (title&&subject&&dueDate){
         tasks.push({
@@ -22,6 +27,7 @@ document.getElementById("task-form").addEventListener("submit", function (e){
         });
         this.reset();
         renderTasks();
+        window.API.saveTasks(tasks);
     }
 
 });
@@ -84,6 +90,7 @@ function renderTasks(){
             checkbox.addEventListener("change", () => {
                 task.completed = checkbox.checked;
                 renderTasks();
+                window.API.saveTasks(tasks);
             });
             completedCell.appendChild(checkbox);
             if (task.completed){
@@ -93,6 +100,7 @@ function renderTasks(){
                 removeButton.addEventListener("click",() => {
                     tasks = tasks.filter(t => t.id !== task.id)
                     renderTasks()
+                    window.API.saveTasks(tasks);
                 });
                 completedCell.appendChild(removeButton);
             }
@@ -136,6 +144,8 @@ document.getElementById("save-note").addEventListener("click", () => {
     const task = tasks.find (t => t.id === currentEditingTaskID);
     task.notes = document.getElementById("notes-text").value.trim();
     closeNotesModal();
+    renderTasks();
+    window.API.saveTasks(tasks);
     //kinda do the same as openNotesModal function
 
 })
