@@ -11,9 +11,10 @@ function createWindow(){
         width:1000,
         hight:700,
         webPreferences:{
-            nodeIntegration:true,
-            contextIsolation:false,
             preload:path.join(__dirname,"preload.js" ),
+            contextIsolation:true,
+            nodeIsolation:false,
+            sandbox : false,
         },
            
         });
@@ -24,24 +25,12 @@ function createWindow(){
 
 
 ipcMain.handle("read-tasks", () => {
-    try {
-        if (!fs.existsSync(tasksPath)) return [];
-        const data = fs.readFileSync(tasksPath, "utf-8");
-        return JSON.parse(data);
-    } catch (err) {
-        console.error("Error reading tasks:", err);
-        return[];
-    }
+    return store.get("tasks", []);
 });
 
-ipcMain.handle("write-tasks", async (_event,tasks) => {
-    try {
-        fs.writeFileSync(tasksPath , JSON.stringify(tasks , null , 2), "utf-8");
-        return true;
-    } catch (err) {
-        console.error("Error writing tasks", err);
-        return false;
-    }
+ipcMain.handle("save-tasks", (_event,tasks) => {
+    store.set("tasks", tasks);
+    return true;
 });
 
 app.whenReady().then(createWindow);
