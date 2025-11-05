@@ -1,3 +1,8 @@
 node_modules/
 /dist/
 /build/
+/dist/* 
+dist/
+build/
+out/
+*.asar
