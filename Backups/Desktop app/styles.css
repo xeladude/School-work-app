@@ -140,35 +140,3 @@ header{
 .modal-content {
     animation: fadeInScale 0.2s ease-out;
 }
-
-#subjects-view{
-    margin-bottom: 20px;
-}
-
-#subjects-grid{
-    display: grid;
-    grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
-    gap : 10px;
-    margin : 10px 0 10px;
-}
-
-.subject-card{
-    padding: 12px;
-    background:gray;
-    display : flex;
-    flex-direction : column;
-    justify-content: space-between;
-
-
-
-}
-
-
-
-.subject-card:hover{
-
-}
-
-.subject-title{
-    
-}
