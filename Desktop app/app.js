@@ -2,7 +2,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
     let tasks = [];
-    let currentEditingTaskID = null;
+    let subjects = [];
+    let activesubject = null;
+    let currentEditingTaskID = null; 
+
+    
     (async function firstLoad() {
         try {
             const loaded = await window.electronAPI.readTasks();
@@ -14,7 +18,49 @@ window.addEventListener("DOMContentLoaded", () => {
             renderTasks();
         }
     })();
+
+// Dashboard area
+    function getUniqueSubjects() {
+        const subjectSet = new Set(tasks.map(t => t.subject));
+        return Array.from(subjectSet).sort();
+    };
     
+    function renderDashboard() {
+        const grid = document.getElementById("subjects-grid");
+        grid.innerHTML = "";
+
+        const subjects = getUniqueSubjects();
+
+        if (subject.length === 0){
+            grid.innerHTML = "<p>No subjects yet!! Add a task to create a new one!</p>";
+            return;
+        }
+
+        subjects.forEach(subject => {
+            const tile = docoument.createElement("div");
+            tile.className = "subject-tile";
+            tile.textContent = subject;
+            tile.addEventListener("click", () => selectSubject(subject));
+            grid.appendChild(tile);
+        })
+    };
+
+
+    function selectSubject(subject){
+        activesubject = subject;
+
+        document.getElementById("subjects-view").classList.add("hidden");
+        document.getElementById("subjects-view").classList.add("hidden");
+        document.getElementById("subjects-view").classList.add("hidden");
+
+    }
+
+    function backToDashboard(){
+
+    }
+
+
+
     document.getElementById("task-form").addEventListener("submit", async function (e) {
         e.preventDefault();
 
@@ -23,12 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const subject = document.getElementById("task-subject").value.trim();
 
         const dueDate = document.getElementById("task-date").value.trim();
-        // const savedTasks = await window.api.getTasks();
-
-        // window.electronAPI.readTasks().then((loadedTasks) => {
-        //     tasks = loadedTasks || [];
-        //     renderTasks();
-        // });
+        
 
         if (!title || !subject || !dueDate) return;
 

@@ -3,8 +3,8 @@ const path = require("path");
 const Store = require("electron-store").default;
 const store = new Store();
 
-const fs = require("fs");
-const tasksPath = path.join(__dirname , "tasks.json");
+// const fs = require("fs");
+// const tasksPath = path.join(__dirname , "tasks.json");
 
 function createWindow(){
     const win = new BrowserWindow({
