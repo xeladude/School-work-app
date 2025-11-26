@@ -1,75 +1,132 @@
 window.addEventListener("DOMContentLoaded", () => {
 
-
     let tasks = [];
-    let subjects = [];
-    let activesubject = null;
-    let currentEditingTaskID = null; 
+    let activeSubject = null;
+    let currentEditingTaskID = null;
+    let customSubjects = [];
 
-    
+
+
+    document.getElementById("subjects-view").classList.remove("hidden");
+    document.getElementById("task-form-section").classList.add("hidden");
+    document.getElementById("section-table").classList.add("hidden");
+    document.getElementById("back-button").classList.add("hidden");
+
+
+
     (async function firstLoad() {
         try {
             const loaded = await window.electronAPI.readTasks();
             tasks = Array.isArray(loaded) ? loaded : [];
             renderTasks();
+            renderDashboard();
         } catch (e) {
             console.error("failed to load tasks", e);
             tasks = [];
             renderTasks();
+            renderDashboard();
         }
     })();
 
-// Dashboard area
+
+    // Dashboard area
     function getUniqueSubjects() {
         const subjectSet = new Set(tasks.map(t => t.subject));
+
+        customSubjects.forEach(s => subjectSet.add(s));
+
         return Array.from(subjectSet).sort();
-    };
-    
+    }
+
+
     function renderDashboard() {
         const grid = document.getElementById("subjects-grid");
         grid.innerHTML = "";
 
         const subjects = getUniqueSubjects();
 
-        if (subject.length === 0){
+        if (subjects.length === 0) {
             grid.innerHTML = "<p>No subjects yet!! Add a task to create a new one!</p>";
             return;
         }
 
         subjects.forEach(subject => {
-            const tile = docoument.createElement("div");
+            const tile = document.createElement("div");
             tile.className = "subject-tile";
             tile.textContent = subject;
             tile.addEventListener("click", () => selectSubject(subject));
             grid.appendChild(tile);
-        })
-    };
-
-
-    function selectSubject(subject){
-        activesubject = subject;
-
-        document.getElementById("subjects-view").classList.add("hidden");
-        document.getElementById("subjects-view").classList.add("hidden");
-        document.getElementById("subjects-view").classList.add("hidden");
-
+        });
     }
 
-    function backToDashboard(){
 
+
+    function selectSubject(subject) {
+        activeSubject = subject;
+
+        document.getElementById("subjects-view").classList.add("hidden");
+        document.getElementById("task-form-section").classList.remove("hidden");
+        document.getElementById("section-table").classList.remove("hidden");
+        document.getElementById("back-button").classList.remove("hidden");
+
+        const subjectInput = document.getElementById("task-subject");
+        subjectInput.value = subject;
+        subjectInput.disabled = true;
+
+        renderTasks();
     }
 
+
+    function backToDashboard() {
+        activeSubject = null;
+
+        document.getElementById("subjects-view").classList.remove("hidden");
+        document.getElementById("task-form-section").classList.add("hidden");
+        document.getElementById("section-table").classList.add("hidden");
+        document.getElementById("back-button").classList.add("hidden");
+
+        const subjectInput = document.getElementById("task-subject");
+        subjectInput.disabled = false;
+        subjectInput.value = "";
+
+        renderDashboard();
+    }
+
+
+    document.getElementById("back-button").addEventListener("click", backToDashboard);
+
+    document.getElementById("add-subject").addEventListener("click", () => {
+        document.getElementById("subject-input").value = "";
+        document.getElementById("subject-modal").classList.remove("hidden");
+    });
+
+    document.getElementById("save-subject").addEventListener("click", () => {
+        const subjectName = document.getElementById("subject-input").value;
+
+        if (!subjectName) return;
+        const clean = subjectName.trim();
+        if (!clean) return;
+
+        if (customSubjects.includes(clean)) return;
+        if (tasks.some(t => t.subject === clean)) return;
+
+        customSubjects.push(clean);
+        document.getElementById("subject-modal").classList.add("hidden");
+        renderDashboard();
+    });
+
+    document.getElementById("cancel-subject").addEventListener("click", () => {
+        document.getElementById("subject-modal").classList.add("hidden");
+    });
 
 
     document.getElementById("task-form").addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const title = document.getElementById("task-title").value.trim();
-
-        const subject = document.getElementById("task-subject").value.trim();
-
+        const subjectInput = document.getElementById("task-subject");
+        const subject = activeSubject || subjectInput.value.trim();
         const dueDate = document.getElementById("task-date").value.trim();
-        
 
         if (!title || !subject || !dueDate) return;
 
@@ -83,81 +140,89 @@ window.addEventListener("DOMContentLoaded", () => {
         });
 
         this.reset();
+
+        if (activeSubject) {
+            subjectInput.value = activeSubject;
+            subjectInput.disabled = true;
+        }
+
         renderTasks();
+        renderDashboard();
         try {
             await window.electronAPI.saveTasks(tasks);
         } catch (e) {
-            console.error("Unable to save tasks: ", e)
+            console.error("Unable to save tasks: ", e);
         }
-
-
-
     });
+
 
 
 
     function renderTasks() {
         const tableBody = document.getElementById("tasks-body");
-
         tableBody.innerHTML = "";
 
-        tasks
-            .forEach(task => {
-                const row = document.createElement("tr");
+        const visibleTasks = activeSubject
+            ? tasks.filter(t => t.subject === activeSubject)
+            : tasks;
 
-                const titleCell = document.createElement("td");
-                titleCell.textContent = task.title;
-                if (task.completed) titleCell.classList.add("task-completed")
+        visibleTasks.forEach(task => {
+            const row = document.createElement("tr");
 
-                const subjectCell = document.createElement("td");
-                subjectCell.textContent = task.subject;
-                if (task.completed) subjectCell.classList.add("task-completed")
+            const titleCell = document.createElement("td");
+            titleCell.textContent = task.title;
+            if (task.completed) titleCell.classList.add("task-completed");
 
-                const dueDateCell = document.createElement("td");
-                dueDateCell.textContent = task.dueDate;
-                if (task.completed) dueDateCell.classList.add("task-completed")
+            const subjectCell = document.createElement("td");
+            subjectCell.textContent = task.subject;
+            if (task.completed) subjectCell.classList.add("task-completed");
 
-                const completedCell = document.createElement("td");
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.checked = task.completed;
+            const dueDateCell = document.createElement("td");
+            dueDateCell.textContent = task.dueDate;
+            if (task.completed) dueDateCell.classList.add("task-completed");
 
-                checkbox.addEventListener("change", async () => {
-                    task.completed = checkbox.checked;
+            const completedCell = document.createElement("td");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = task.completed;
+
+            checkbox.addEventListener("change", async () => {
+                task.completed = checkbox.checked;
+                renderTasks();
+                try { await window.electronAPI.saveTasks(tasks); } catch (e) { console.error(e); }
+            });
+
+            completedCell.appendChild(checkbox);
+            if (task.completed) {
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.className = "remove-button";
+                removeButton.addEventListener("click", async () => {
+                    tasks = tasks.filter(t => t.id !== task.id);
                     renderTasks();
                     try { await window.electronAPI.saveTasks(tasks); } catch (e) { console.error(e); }
                 });
+                completedCell.appendChild(removeButton);
+            }
 
-                completedCell.appendChild(checkbox);
-                if (task.completed) {
-                    const removeButton = document.createElement("button");
-                    removeButton.textContent = "Remove";
-                    removeButton.className = "remove-button";
-                    removeButton.addEventListener("click", async () => {
-                        tasks = tasks.filter(t => t.id !== task.id);
-                        renderTasks();
-                        try { await window.electronAPI.saveTasks(tasks); } catch (e) { console.error(e); }
-                    });
-                    completedCell.appendChild(removeButton);
-                }
+            const notesCell = document.createElement("td");
+            const notesButton = document.createElement("button");
+            notesButton.textContent = "📝";
+            notesButton.className = "notes-button";
+            notesButton.addEventListener("click", () => openNotesModal(task.id));
+            notesCell.appendChild(notesButton);
 
-                const notesCell = document.createElement("td");
-                const notesButton = document.createElement("button");
-                notesButton.textContent = "📝";
-                notesButton.className = "notes-button";
-                notesButton.addEventListener("click", () => openNotesModal(task.id));
-                notesCell.appendChild(notesButton);
+            row.appendChild(titleCell);
+            row.appendChild(subjectCell);
+            row.appendChild(dueDateCell);
+            row.appendChild(notesCell);
+            row.appendChild(completedCell);
 
-                row.appendChild(titleCell);
-                row.appendChild(subjectCell);
-                row.appendChild(dueDateCell);
-                row.appendChild(notesCell)
-                row.appendChild(completedCell);
-
-                tableBody.appendChild(row);
-
-            });
+            tableBody.appendChild(row);
+        });
     }
+
+
 
 
     function openNotesModal(taskID) {
@@ -165,28 +230,21 @@ window.addEventListener("DOMContentLoaded", () => {
         const task = tasks.find(t => t.id === taskID);
         document.getElementById("notes-text").value = task?.notes || "";
         document.getElementById("notes-modal").classList.remove("hidden");
-
-        // find the task ID, then display notes modal
     }
 
     function closeNotesModal() {
         currentEditingTaskID = null;
-        document.getElementById("notes-modal").classList.add("hidden")
-        // close it (duh)
+        document.getElementById("notes-modal").classList.add("hidden");
     }
 
-    // configure modal buttons
     document.getElementById("save-note").addEventListener("click", async () => {
         const task = tasks.find(t => t.id === currentEditingTaskID);
         if (task) {
             task.notes = document.getElementById("notes-text").value.trim();
-
         }
         closeNotesModal();
         renderTasks();
         try { await window.electronAPI.saveTasks(tasks); } catch (e) { console.error(e); }
-        //kinda do the same as openNotesModal function
-
     })
 
     document.getElementById("cancel-note").addEventListener("click", closeNotesModal);

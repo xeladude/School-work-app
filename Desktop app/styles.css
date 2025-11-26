@@ -152,27 +152,15 @@ header{
     margin : 10px 0 10px;
 }
 
-.subject-card{
-    padding: 12px;
-    background:gray;
-    display : flex;
-    flex-direction : column;
-    justify-content: space-between;
 
 
-
-}
-
-
-
-.subject-card:hover{
-
-}
 
 .subject-title{
 
 }
 
-.subject-meta{
-    
+
+.subject-title:hover{
+
 }
+

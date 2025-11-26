@@ -6,22 +6,23 @@ const store = new Store();
 // const fs = require("fs");
 // const tasksPath = path.join(__dirname , "tasks.json");
 
+
 function createWindow(){
     const win = new BrowserWindow({
-        width:1000,
-        hight:700,
-        webPreferences:{
-            preload:path.join(__dirname,"preload.js" ),
-            contextIsolation:true,
-            nodeIsolation:false,
-            sandbox : false,
+        width: 1000,
+        height: 700,                      
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            contextIsolation: true,
+            nodeIntegration: false,        
+            sandbox: false,
         },
-           
-        });
+    });
     win.loadFile("index.html");
     // win.webContents.openDevTools();
-
 }
+
+
 
 
 ipcMain.handle("read-tasks", () => {

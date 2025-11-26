@@ -1,0 +1,2 @@
+1. No longer saveing
+2. states are not working - the Dashboard and Task list is rendering at the same time
