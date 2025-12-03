@@ -57,6 +57,15 @@ window.addEventListener("DOMContentLoaded", () => {
             tile.addEventListener("click", () => selectSubject(subject));
             grid.appendChild(tile);
         });
+
+        const addTile = document.createElement("div");
+        addTile.className = "subject-tile add-tile";
+        addTile.innerHTML = "➕";
+        addTile.addEventListener("click", () => {
+            document.getElementById("subject-input".value = "");
+            document.getElementById("subject-modal").classList.remove("hidden");
+        });
+        grid.appendChild(addTile);
     }
 
 
@@ -95,10 +104,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("back-button").addEventListener("click", backToDashboard);
 
-    document.getElementById("add-subject").addEventListener("click", () => {
-        document.getElementById("subject-input").value = "";
-        document.getElementById("subject-modal").classList.remove("hidden");
-    });
+    // document.getElementById("add-subject").addEventListener("click", () => {
+    //     document.getElementById("subject-input").value = "";
+    //     document.getElementById("subject-modal").classList.remove("hidden");
+    // });
 
     document.getElementById("save-subject").addEventListener("click", () => {
         const subjectName = document.getElementById("subject-input").value;

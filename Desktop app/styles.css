@@ -55,7 +55,7 @@ header{
     text-align: left;
 }
 #tasks-table th {
-   background-color: #007BFF;
+   background-color: #3c80c4;
    color:white
    
 }
@@ -133,12 +133,16 @@ header{
 @keyframes fadeInScale{
     from{
         opacity: 0;
-        transfor: scale(0.95);
+        transform: scale(0.95);
+    }
+    to{
+        opacity: 1;
+        transform: scale(1);
     }
 }
 
 .modal-content {
-    animation: fadeInScale 0.2s ease-out;
+    animation: fadeInScale 0.5s ease-out;
 }
 
 #subjects-view{
@@ -155,12 +159,57 @@ header{
 
 
 
-.subject-title{
+.subject-tile{
+    background-color: #5a6a9e;
+    /* color: #5a6a9e; */
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: 0.2s ease;
 
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-tile{
+    background: white;
+    color: #cbce3e;
+    border: 2px dashed #555555e5;
+
+    font-size: 1.8em;
+    padding: 10px;
+
+    min-height: 10px;
+    min-width: 10px;
+
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+
+    transition: 0.2s ease;
+}
+
+.add-tile:hover{
+    background: white;
+    transform: scale(1.05);
 }
 
 
-.subject-title:hover{
+.subject-tile:hover{
+    background-color: #3c80c4;
+    color: white;
+    transform: scale(1.01);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.747);
+    
 
 }
 
