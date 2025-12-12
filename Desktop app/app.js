@@ -266,6 +266,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
+const darkmode = document.getElementById("darkmode");
+
+if (localStorage.getItem("darkmode")==="true"){
+    document.body.classList.add("dark");
+}
+
+darkmode.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    const enabled = document.body.classList.contains("dark");
+    localStorage.setItem("darkmode", enabled);
+});
 
 
 
