@@ -27,7 +27,7 @@
     "electron-store": "^11.0.2"
   },
   "build": {
-    "appId": "com.yourdomain.schoolworktracker",
+    "appId": "com.xeladude.schoolworktracker",
     "asar": true,
     "files": [
       "index.html",

@@ -47,22 +47,23 @@ window.addEventListener("DOMContentLoaded", () => {
 
         if (subjects.length === 0) {
             grid.innerHTML = "<p>No subjects yet!! Add a task to create a new one!</p>";
-            return;
-        }
+        } else {
 
-        subjects.forEach(subject => {
-            const tile = document.createElement("div");
-            tile.className = "subject-tile";
-            tile.textContent = subject;
-            tile.addEventListener("click", () => selectSubject(subject));
-            grid.appendChild(tile);
-        });
+            subjects.forEach(subject => {
+                const tile = document.createElement("div");
+                tile.className = "subject-tile";
+                tile.textContent = subject;
+                tile.addEventListener("click", () => selectSubject(subject));
+                grid.appendChild(tile);
+            });
+
+        }
 
         const addTile = document.createElement("div");
         addTile.className = "subject-tile add-tile";
         addTile.innerHTML = "➕";
         addTile.addEventListener("click", () => {
-            document.getElementById("subject-input".value = "");
+            document.getElementById("subject-input").value = "";
             document.getElementById("subject-modal").classList.remove("hidden");
         });
         grid.appendChild(addTile);
@@ -268,7 +269,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 const darkmode = document.getElementById("darkmode");
 
-if (localStorage.getItem("darkmode")==="true"){
+if (localStorage.getItem("darkmode") === "true") {
     document.body.classList.add("dark");
 }
 
